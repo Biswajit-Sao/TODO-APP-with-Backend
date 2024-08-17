@@ -9,4 +9,4 @@ In the project directory, you can run:
 ### `npm start`
 
 
-![Alt Text](screenshot.png)
+![Alt Text](./Screenshot.pngscreenshot.png)
