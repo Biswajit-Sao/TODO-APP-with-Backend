@@ -1,25 +1,43 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
+import { getTodos, createTodo, updateTodo, deleteTodo } from './api';
+import TodoList from './components/TodoList';
+import AddTodo from './components/AddTodo';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [todos, setTodos] = useState([]);
+
+    useEffect(() => {
+        const fetchTodos = async () => {
+            const todos = await getTodos();
+            setTodos(todos);
+        };
+        fetchTodos();
+    }, []);
+
+    const addTodo = async (todo) => {
+        const newTodo = await createTodo(todo);
+        setTodos([...todos, newTodo]);
+    };
+
+    const toggleComplete = async (id) => {
+        const todo = todos.find(todo => todo._id === id);
+        const updatedTodo = await updateTodo(id, { completed: !todo.completed });
+        setTodos(todos.map(todo => todo._id === id ? updatedTodo : todo));
+    };
+
+    const removeTodo = async (id) => {
+        await deleteTodo(id);
+        setTodos(todos.filter(todo => todo._id !== id));
+    };
+
+    return (
+        <div className="container">
+            <h1>Todo List</h1>
+            <AddTodo addTodo={addTodo} />
+            <TodoList todos={todos} toggleComplete={toggleComplete} removeTodo={removeTodo} />
+        </div>
+    );
 }
 
 export default App;
